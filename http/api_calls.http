@@ -1,0 +1,66 @@
+### Welcome
+GET http://localhost:8080/
+
+### MOVIES ###
+### Get all movies from a store
+GET http://localhost:8080/film/2
+
+### Find a movie by title from a store
+GET http://localhost:8080/film/1?title=maude
+
+### Find a movie by actor from a store
+GET http://localhost:8080/film/1?actor=gina
+
+### Find a movie by title and actor from a store
+GET http://localhost:8080/film/2?title=window&actor=gina
+
+### STORES ###
+### Get all stores
+GET http://localhost:8080/store
+
+### Get an specific store
+GET http://localhost:8080/store/5
+
+### ADDRESSES ###
+### Get specific address info
+GET http://localhost:8080/address/5
+
+### USERS ###
+### Get specific user info
+GET http://localhost:8080/user/599
+
+### Crate a new user
+POST http://localhost:8080/user
+Content-Type: application/json
+
+{
+  "store_id": 20,
+  "first_name": "Ronaldo",
+  "last_name": "Rojas",
+  "email": "ronaldo.rojas@noreply.com",
+  "address_id": 5
+}
+
+### Update an existing user
+PUT http://localhost:8080/user/602
+Content-Type: application/json
+
+{
+  "store_id": 2,
+  "first_name": "Ronaldo",
+  "last_name": "Rojas",
+  "email": "ronaldo.rojas@noreply.com",
+  "address_id": 10
+}
+
+### RENTS ###
+### Make a rent for a film
+POST http://localhost:8080/rent
+Content-Type: application/json
+
+{
+  "rental_date": "2021-11-23 00:29:45",
+  "inventory_id": 1,
+  "customer_id": 602,
+  "return_date": "2021-11-28 00:29:45"
+}

@@ -1,0 +1,453 @@
+swagger: "2.0"
+info:
+  description: "This is a Film Rental server based on Sakila Database. This server 
+                will allow the client to get access to the movie's list that can be
+                rented. Here you can find the different endpoints with their specific
+                functionality.\n\n
+                Created by: Ronaldo Rojas Ayala, Junior Alexander Sosa Asillanes"
+  version: "1.0.0"
+  title: "Sakila Rental"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+
+tags:
+- name: "store"
+  description: "Access to available stores"
+
+- name: "film"
+  description: "Operations about films"
+
+- name: "rent"
+  description: "Operations about rent"
+
+- name: "user"
+  description: "Operations about users"
+
+- name: "address"
+  description: "Access to available adresses"
+
+schemes:
+- "http"
+
+paths:
+  /store:
+    get:
+      tags:
+      - "store"
+      summary: "Finds available stores"
+      operationId: "getStore"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StoreResponseArray"
+        "404":
+          description: "Stores not found"
+  
+  /store/{storeId}:
+    get:
+      tags:
+      - "store"
+      summary: "Finds store by ID"
+      operationId: "getStoreById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "storeId"
+        in: "path"
+        description: "ID of the store you want data of"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/StoreResponse"
+        "400":
+          description: "Invalid storeId supplied"
+        "404":
+          description: "Store not found"
+
+  /film/{storeId}:
+    get:
+      tags:
+        - "film"
+      summary: "Get all films"
+      description: "Returns a map of films to quantities available"
+      operationId: "getFilms"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "storeId"
+          in: "path"
+          description: "ID of the store you want data of"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/FilmResponseArray"
+        "404":
+          description: "Films not found"
+
+  /film/{storeId}?title=sometitle:
+    get:
+      tags:
+        - "film"
+      summary: "Get all films filtered by title"
+      description: "Returns a map of films to quantities available filtered by title"
+      operationId: "getFilmsByTitle"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "storeId"
+          in: "path"
+          description: "ID of the store you want data of"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "title"
+          in: "query"
+          required: true
+          type: "string"
+          description: "The title of the movie"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/FilmResponseArray"
+        "400":
+          description: "Invalid title supplied"
+        "404":
+          description: "Films not found"
+
+  /film/{storeId}?actor=someactor:
+    get:
+      tags:
+        - "film"
+      summary: "Get all films filtered by actor"
+      description: "Returns a map of films to quantities available filtered by actor"
+      operationId: "getFilmsByActor"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "storeId"
+          in: "path"
+          description: "ID of the store you want data of"
+          required: true
+          type: "integer"
+          format: "int64"
+        - name: "actor"
+          in: "query"
+          required: true
+          type: "string"
+          description: "The actor of the movie"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/FilmResponseArray"
+        "400":
+          description: "Invalid actor supplied"
+        "404":
+          description: "Films not found"
+
+  /rent:
+    post:
+      tags:
+        - "rent"
+      summary: "Make a rent for a film"
+      description: ""
+      operationId: "makeRent"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "rent placed for renting a film"
+          required: true
+          schema:
+            $ref: "#/definitions/RentRequest"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/RentResponse"
+        "400":
+          description: "Invalid Rent data supplied"
+
+  /user:
+    post:
+      tags:
+      - "user"
+      summary: "Create user"
+      description: ""
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information about the user to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/ReceivedUser"
+      responses:
+        "200":
+          description: "User created succesfully"
+        "400":
+          description: "Invalid data supplied"
+          
+  /user/{userId}:
+    get:
+      tags:
+      - "user"
+      summary: "Get user by ID"
+      description: ""
+      operationId: "getUserById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "The ID that needs to be fetched."
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/SentUser"
+        "400":
+          description: "Invalid user ID supplied"
+        "404":
+          description: "User not found"
+    put:
+      tags:
+      - "user"
+      summary: "Update user"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userId"
+        in: "path"
+        description: "ID of the user that needs to be updated"
+        required: true
+        type: "string"
+      - name: "body"
+        in: "body"
+        description: "User object with updated fields"
+        required: true
+        schema:
+          $ref: "#/definitions/ReceivedUser"
+      responses:
+        "200":
+          description: "User updated succesfully"
+        "400":
+          description: "Invalid data supplied"
+        "404":
+          description: "User not found"
+
+  /address/{id}:
+    get:
+      tags:
+      - "address"
+      summary: "Returns data about a specific address"
+      operationId: "getStore"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "addressId"
+        in: "path"
+        description: "ID of the address you want the data for"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Address"
+        "400":
+          description: "Invalid address ID supplied"
+        "404":
+          description: "Address not found"
+      security:
+      - api_key: []
+
+# Security Definitions
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      write:pets: "modify pets in your account"
+      read:pets: "read your pets"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+    
+# Object Definitions
+definitions:
+  StoreResponse:
+    type: "object"
+    properties:
+      store_id:
+        type: "integer"
+        format: "int32"
+      country:
+        type: "string"
+
+  StoreResponseArray:
+    type: "array"
+    items:
+      $ref: "#/definitions/StoreResponse"
+
+  FilmResponse:
+    type: "object"
+    properties:
+      film_id:
+        type: "integer"
+        format: "int32"
+      title:
+        type: "string"
+      description:
+        type: "string"
+      release_year:
+        type: "integer"
+        format: "int32"
+      language:
+        type: "string"
+      original_language:
+        type: "string"
+      rental_duration:
+        type: "integer"
+        format: "int32"
+      rental_rate:
+        type: "number"
+        format: "double"
+      length:
+        type: "integer"
+        format: "int32"
+      replacement_cost:
+        type: "number"
+        format: "double"
+      rating:
+        type: "integer"
+        format: "int32"
+      special_features:
+        type: "integer"
+        format: "int32"
+      quantity:
+        type: "integer"
+        format: "int32"
+  
+  FilmResponseArray:
+    type: "array"
+    items:
+      $ref: "#/definitions/FilmResponse"
+
+  RentRequest:
+    type: "object"
+    properties:
+      rental_date:
+        type: "string"
+      inventory_id:
+        type: "integer"
+        format: "int32"
+      customer_id:
+        type: "integer"
+        format: "int32"
+      return_date:
+        type: "string"
+
+  RentResponse:
+    type: "object"
+    properties:
+      rental_id:
+        type: "integer"
+        format: "int32"
+      rental_date:
+        type: "string"
+      inventory_id:
+        type: "integer"
+        format: "int32"
+      customer_id:
+        type: "integer"
+        format: "int32"
+      return_date:
+        type: "string"
+
+  ReceivedUser:
+    type: "object"
+    properties:
+      storeId: 
+        type: "integer"
+        format: "int32"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      addressId:
+        type: "integer"
+        format: "int32"
+
+  SentUser:
+    type: "object"
+    properties:
+      id: 
+        type: "integer"
+        format: "int32"
+      storeId: 
+        type: "integer"
+        format: "int32"
+      firstName:
+        type: "string"
+      lastName:
+        type: "string"
+      email:
+        type: "string"
+      addressId:
+        type: "integer"
+        format: "int32"
+      active:
+        type: "integer"
+        format: "int32"
+      createDate:
+        type: "string"
+
+  
+  Address:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+        format: "int32"
+      address:
+        type: "string"
+      address2:
+        type: "string"
+      district:
+        type: "string"
+      city:
+        type: "string"
+      country:
+        type: "string"
+      postalCode:
+        type: "string"
+      phone: 
+        type: "string"
+      location:
+        type: "string"
