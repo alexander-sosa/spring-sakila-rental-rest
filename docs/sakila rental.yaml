@@ -4,7 +4,8 @@ info:
                 will allow the client to get access to the movie's list that can be
                 rented. Here you can find the different endpoints with their specific
                 functionality.\n\n
-                Created by: Ronaldo Rojas Ayala, Junior Alexander Sosa Asillanes"
+                Created by: Ronaldo Rojas Ayala, Alexander Sosa\n
+                Corrections by: Alexander Sosa"
   version: "1.0.0"
   title: "Sakila Rental"
   license:
@@ -251,18 +252,39 @@ paths:
           $ref: "#/definitions/ReceivedUser"
       responses:
         "200":
-          description: "User updated succesfully"
+          description: "User updated successfully"
         "400":
           description: "Invalid data supplied"
         "404":
           description: "User not found"
+
+  /address:
+    post:
+      tags:
+      - "address"
+      summary: "Creates a new address"
+      operationId: "createAddress"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Information about the address to be created"
+        required: true
+        schema:
+          $ref: "#/definitions/NewAddress"
+      responses:
+        "200":
+          description: "Address created successfully"
+        "400":
+          description: "Invalid data supplied"
 
   /address/{id}:
     get:
       tags:
       - "address"
       summary: "Returns data about a specific address"
-      operationId: "getStore"
+      operationId: "getAddress"
       produces:
       - "application/json"
       parameters:
@@ -280,8 +302,43 @@ paths:
           description: "Invalid address ID supplied"
         "404":
           description: "Address not found"
-      security:
-      - api_key: []
+
+  /address/country:
+    get:
+      tags:
+      - "address"
+      summary: "Returns all available countries"
+      operationId: "getCountry"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#definitions/Country"
+
+  /address/city/{countryId}:
+    get:
+      tags:
+        - "address"
+      summary: "Returns all available cities"
+      operationId: "getCity"
+      produces:
+        - "application/json"
+      parameters:
+      - name: "countryId"
+        in: "path"
+        description: "ID of the country you want the cities of"
+        required: true
+        type: "integer"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            $ref: "#definitions/City"
+        "400":
+          description: "Invalid data supplied"
 
 # Security Definitions
 securityDefinitions:
@@ -428,7 +485,6 @@ definitions:
       createDate:
         type: "string"
 
-  
   Address:
     type: "object"
     properties: 
@@ -449,5 +505,41 @@ definitions:
         type: "string"
       phone: 
         type: "string"
-      location:
+
+  NewAddress:
+    type: "object"
+    properties:
+      address:
+        type: "string"
+      address2:
+        type: "string"
+      district:
+        type: "string"
+      city_id:
+        type: "integer"
+        format: "int32"
+      postalCode:
+        type: "string"
+      phone:
+        type: "string"
+
+  Country:
+    type: "object"
+    properties:
+      country_id:
+        type: "integer"
+        format: "int32"
+      country:
+        type: "string"
+
+  City:
+    type: "object"
+    properties:
+      city_id:
+        type: "integer"
+        format: "int32"
+      country_id:
+        type: "integer"
+        format: "int32"
+      city:
         type: "string"

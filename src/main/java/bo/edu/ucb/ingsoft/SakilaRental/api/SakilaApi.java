@@ -73,6 +73,27 @@ public class SakilaApi {
         return new ResponseEntity<>("Store not found", HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value = "/address/country", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public List<Country> getCountries(){
+        return addressBL.getCountries();
+    }
+
+    @GetMapping(value = "/address/city/{countryId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> getCitiesFromCountry(@PathVariable(name = "countryId") Integer countryId){
+        List<City> cities = addressBL.findCityByCountry(countryId);
+        if(!cities.isEmpty())
+            return new ResponseEntity<>(cities, HttpStatus.OK);
+        return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(value = "/address", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> createAddress(@RequestBody Address address){
+        List<Address> newAddress = addressBL.createAddress(address);
+        if(!newAddress.isEmpty())
+            return new ResponseEntity<>(newAddress, HttpStatus.OK);
+        return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
+    }
+
     @GetMapping(value = "/address/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<Object> getSpecificAddress(@PathVariable(name = "id") Integer addressId){
         List<Address> address = addressBL.findAddressById(addressId);
@@ -110,4 +131,5 @@ public class SakilaApi {
             return new ResponseEntity<>("Rent registered successfully", HttpStatus.OK);
         return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
     }
+
 }

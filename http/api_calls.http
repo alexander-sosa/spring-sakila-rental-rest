@@ -25,6 +25,25 @@ GET http://localhost:8080/store/5
 ### Get specific address info
 GET http://localhost:8080/address/5
 
+### Get all countries
+GET http://localhost:8080/address/country
+
+### Get all cities from a country
+GET http://localhost:8080/address/city/50
+
+### Crate a new address
+POST http://localhost:8080/address
+Content-Type: application/json
+
+{
+  "address": "Calle 2",
+  "address2": "",
+  "district": "Murillo",
+  "city_id": 59,
+  "postal_code": "00000",
+  "phone": "77777777"
+}
+
 ### USERS ###
 ### Get specific user info
 GET http://localhost:8080/user/599
