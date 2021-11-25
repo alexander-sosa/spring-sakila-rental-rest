@@ -6,11 +6,9 @@ import java.util.Objects;
 public class Rent {
     private Integer rental_id;
     private String rental_date;
-    private String rental_date_string;
     private Integer inventory_id;
     private Integer customer_id;
     private String return_date;
-    private String return_date_string;
 
     public Rent(){
 
@@ -30,7 +28,6 @@ public class Rent {
 
     public void setRental_date(String rental_date) {
         this.rental_date = rental_date;
-        this.rental_date_string = rental_date.toString();
     }
 
     public Integer getInventory_id() {
@@ -55,23 +52,6 @@ public class Rent {
 
     public void setReturn_date(String return_date) {
         this.return_date = return_date;
-        this.return_date_string = return_date.toString();
-    }
-
-    public String getRental_date_string() {
-        return rental_date_string;
-    }
-
-    public void setRental_date_string(String rental_date_string) {
-        this.rental_date_string = rental_date_string;
-    }
-
-    public String getReturn_date_string() {
-        return return_date_string;
-    }
-
-    public void setReturn_date_string(String return_date_string) {
-        this.return_date_string = return_date_string;
     }
 
     @Override
@@ -91,11 +71,9 @@ public class Rent {
     public String toString() {
         return "Rent{" +
                 "rental_date=" + rental_date +
-                ", rental_date(String)=" + rental_date_string +
                 ", inventory_id=" + inventory_id +
                 ", customer_id=" + customer_id +
                 ", return_date=" + return_date +
-                ", return_date(String)=" + return_date_string +
                 '}';
     }
 }

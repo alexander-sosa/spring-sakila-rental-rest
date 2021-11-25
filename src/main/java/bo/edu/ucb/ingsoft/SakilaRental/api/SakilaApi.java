@@ -125,11 +125,19 @@ public class SakilaApi {
         return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping(value = "/rent", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> registerRent(@RequestBody Rent rent){
-        if(rentBL.registerRent(rent))
-            return new ResponseEntity<>("Rent registered successfully", HttpStatus.OK);
+    @PostMapping(value = "/rent", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> registerRent(@RequestBody Rent rent){
+        List<Rent> registeredRent = rentBL.registerRent(rent);
+        if(!registeredRent.isEmpty())
+            return new ResponseEntity<>(registeredRent, HttpStatus.OK);
         return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping(value = "/payment", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> registerPayment(@RequestBody Payment payment){
+        List<Payment> registeredPayment = rentBL.registerPayment(payment);
+        if(!registeredPayment.isEmpty())
+            return new ResponseEntity<>(registeredPayment, HttpStatus.OK);
+        return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
+    }
 }

@@ -1,9 +1,12 @@
 package bo.edu.ucb.ingsoft.SakilaRental.bl;
 
 import bo.edu.ucb.ingsoft.SakilaRental.dao.RentDao;
+import bo.edu.ucb.ingsoft.SakilaRental.dto.Payment;
 import bo.edu.ucb.ingsoft.SakilaRental.dto.Rent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class RentBL {
@@ -14,7 +17,11 @@ public class RentBL {
         this.rentDao = rentDao;
     }
 
-    public boolean registerRent(Rent rent){
+    public List<Rent> registerRent(Rent rent){
         return rentDao.registerRent(rent);
+    }
+
+    public List<Payment> registerPayment(Payment payment){
+        return rentDao.registerPayment(payment);
     }
 }

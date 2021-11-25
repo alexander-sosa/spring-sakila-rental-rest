@@ -184,6 +184,28 @@ paths:
         "400":
           description: "Invalid Rent data supplied"
 
+  /payment:
+    post:
+      tags:
+        - "rent"
+      summary: "Make a payment for a rent"
+      description: ""
+      operationId: "makePayment"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Info about a rent to register its payment"
+          required: true
+          schema:
+            $ref: "#/definitions/Payment"
+      responses:
+        "200":
+          description: "Payment registered successfully"
+        "400":
+          description: "Invalid Rent data supplied"
+
   /user:
     post:
       tags:
@@ -444,6 +466,22 @@ definitions:
         format: "int32"
       return_date:
         type: "string"
+
+  Payment:
+    type: "object"
+    properties:
+      customer_id:
+        type: "integer"
+        format: "int32"
+      rental_id:
+        type: "integer"
+        format: "int32"
+      amount:
+        type: "number"
+        format: "double"
+      payment_date:
+        type: "string"
+        format: "datetime"
 
   ReceivedUser:
     type: "object"

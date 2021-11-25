@@ -79,7 +79,18 @@ Content-Type: application/json
 
 {
   "rental_date": "2021-11-23 00:29:45",
-  "inventory_id": 1,
+  "inventory_id": 100,
   "customer_id": 602,
   "return_date": "2021-11-28 00:29:45"
+}
+
+### Make a payment for a film
+POST http://localhost:8080/payment
+Content-Type: application/json
+
+{
+  "customer_id": 602,
+  "rental_id": 100,
+  "amount": 69.96,
+  "payment_date": "2021-11-28 00:29:45"
 }
