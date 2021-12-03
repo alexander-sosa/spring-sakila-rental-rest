@@ -6,6 +6,10 @@ GET http://localhost:8080/
 GET http://localhost:8080/film/2
 Accept: application/json
 
+### Get premieres from a store
+GET http://localhost:8080/film/premiere/1
+Accept: application/json
+
 ### Get 10 random movies from a store
 GET http://localhost:8080/film/random/2
 Accept: application/json

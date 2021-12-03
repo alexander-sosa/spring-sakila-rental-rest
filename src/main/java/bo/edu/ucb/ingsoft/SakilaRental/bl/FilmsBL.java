@@ -20,6 +20,10 @@ public class FilmsBL {
         return filmDao.getMovies(storeId);
     }
 
+    public List<Film> getPremieres(Integer storeId){
+        return filmDao.getPremieres(storeId);
+    }
+
     public List<Film> findByTitle(Integer storeId, String title){
         return filmDao.findByTitle(storeId, title);
     }

@@ -63,6 +63,15 @@ public class SakilaApi {
         return new ResponseEntity<>("Film not found", HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value = "/film/premiere/{storeId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> getPremieres(@PathVariable(name = "storeId") Integer storeId){
+        List<Film> films;
+        films = filmsBL.getPremieres(storeId);
+        if(films.size() != 0)
+            return new ResponseEntity<>(films, HttpStatus.OK);
+        return new ResponseEntity<>("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @GetMapping(value = "/film/random/{storeId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<Object> getRandomMovies(@PathVariable(name = "storeId") Integer storeId){
         List<Film> films;

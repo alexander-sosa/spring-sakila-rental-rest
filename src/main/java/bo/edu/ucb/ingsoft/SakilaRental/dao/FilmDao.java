@@ -67,6 +67,51 @@ public class FilmDao {
         return result;
     }
 
+    public List<Film> getPremieres(Integer store_id){
+        String query = "select f.film_id, f.title, f.description, f.release_year,\n" +
+                "       l.name as language , ol.name as original_language, f.length,\n" +
+                "       f.rating, f.special_features, f.rental_duration, f.rental_rate, f.replacement_cost,\n" +
+                "       count(*) as quantity\n" +
+                "from film f\n" +
+                "         LEFT JOIN language l ON ( f.language_id = l.language_id)\n" +
+                "         LEFT JOIN language ol ON ( f.original_language_id = ol.language_id)\n" +
+                "         LEFT JOIN inventory i ON (f.film_id = i.film_id)\n" +
+                "WHERE\n" +
+                "        i.store_id = ?\n" +
+                "GROUP BY f.film_id, i.last_update\n" +
+                "order by i.last_update desc limit 10;";
+
+        List<Film> result = new ArrayList<>();
+        try(
+                Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt =  conn.prepareStatement(query);
+        ){
+            pstmt.setInt(1, store_id);
+            ResultSet rs =  pstmt.executeQuery();
+            while(rs.next()){
+                Film film = new Film();
+                film.setFilm_id(rs.getInt("film_id"));
+                film.setTitle(rs.getString("title"));
+                film.setDescription(rs.getString("description"));
+                film.setRelease_year(rs.getInt("release_year"));
+                film.setLanguage(rs.getString("language"));
+                film.setOriginal_language(rs.getString("original_language"));
+                film.setLength(rs.getInt("length"));
+                film.setRating(rs.getString("rating"));
+                film.setSpecial_features(rs.getString("special_features"));
+                film.setRental_duration(rs.getInt("rental_duration"));
+                film.setRental_rate(rs.getDouble("rental_rate"));
+                film.setReplacement_cost(rs.getDouble("replacement_cost"));
+                film.setQuantity(getMoviesInStock(store_id, rs.getInt("film_id"), rs.getInt("quantity")));
+                result.add(film);
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            // TODO: gestionar correctamente la excepcion
+        }
+        return result;
+    }
+
     public List<Film> findByTitle(Integer store_id, String title){
         String query = "SELECT f.film_id, f.title, f.description, f.release_year, " +
                 "       l.name as language , ol.name as original_language, f.length, " +
@@ -300,7 +345,7 @@ public class FilmDao {
                 "        LEFT JOIN staff s on s.staff_id = r.staff_id\n" +
                 "WHERE s.staff_id = ?\n" +
                 "GROUP BY r.inventory_id\n" +
-                "ORDER BY times_rented desc limit 10;";
+                "ORDER BY times_rented desc limit 11;";
         try(
                 Connection conn = dataSource.getConnection();
                 PreparedStatement pstmt =  conn.prepareStatement(query);
@@ -324,6 +369,7 @@ public class FilmDao {
         Date currentDate = new Date();
 
         List<Film> result = new ArrayList<>();
+        List<Integer> shown = new ArrayList<>();
         String query = "SELECT COUNT(r.inventory_id) as times_rented, i.inventory_id, i.film_id\n" +
                 "FROM rental r\n" +
                 "        LEFT JOIN inventory i on r.inventory_id = i.inventory_id\n" +
@@ -342,8 +388,10 @@ public class FilmDao {
             ResultSet rs =  pstmt.executeQuery();
             while(rs.next()){
                 Film film =getSpecificFilm(storeId, rs.getInt("film_id"));
-                if(film.getTitle() != null)
+                if(film.getTitle() != null && !inResults(film.getFilm_id(), shown)) {
                     result.add(film);
+                    shown.add(film.getFilm_id());
+                }
             }
         }catch(SQLException ex){
             ex.printStackTrace();
@@ -393,6 +441,14 @@ public class FilmDao {
             // TODO: gestionar correctamente la excepcion
         }
         return film;
+    }
+
+    private boolean inResults(Integer filmId, List<Integer> shown){
+        for (int id: shown) {
+            if (id == filmId)
+                return true;
+        }
+        return false;
     }
 
 }
