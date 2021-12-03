@@ -46,8 +46,8 @@ public class FilmDao {
                 film.setTitle(rs.getString("title"));
                 film.setDescription(rs.getString("description"));
                 film.setRelease_year(rs.getInt("release_year"));
-                film.setLanguage("language");
-                film.setOriginal_language("original_language");
+                film.setLanguage(rs.getString("language"));
+                film.setOriginal_language(rs.getString("original_language"));
                 film.setLength(rs.getInt("length"));
                 film.setRating(rs.getString("rating"));
                 film.setSpecial_features(rs.getString("special_features"));
@@ -91,8 +91,8 @@ public class FilmDao {
                 film.setTitle(rs.getString("title"));
                 film.setDescription(rs.getString("description"));
                 film.setRelease_year(rs.getInt("release_year"));
-                film.setLanguage("language");
-                film.setOriginal_language("original_language");
+                film.setLanguage(rs.getString("language"));
+                film.setOriginal_language(rs.getString("original_language"));
                 film.setLength(rs.getInt("length"));
                 film.setRating(rs.getString("rating"));
                 film.setSpecial_features(rs.getString("special_features"));
@@ -138,8 +138,8 @@ public class FilmDao {
                 film.setTitle(rs.getString("title"));
                 film.setDescription(rs.getString("description"));
                 film.setRelease_year(rs.getInt("release_year"));
-                film.setLanguage("language");
-                film.setOriginal_language("original_language");
+                film.setLanguage(rs.getString("language"));
+                film.setOriginal_language(rs.getString("original_language"));
                 film.setLength(rs.getInt("length"));
                 film.setRating(rs.getString("rating"));
                 film.setSpecial_features(rs.getString("special_features"));
@@ -187,8 +187,8 @@ public class FilmDao {
                 film.setTitle(rs.getString("title"));
                 film.setDescription(rs.getString("description"));
                 film.setRelease_year(rs.getInt("release_year"));
-                film.setLanguage("language");
-                film.setOriginal_language("original_language");
+                film.setLanguage(rs.getString("language"));
+                film.setOriginal_language(rs.getString("original_language"));
                 film.setLength(rs.getInt("length"));
                 film.setRating(rs.getString("rating"));
                 film.setSpecial_features(rs.getString("special_features"));
@@ -204,4 +204,59 @@ public class FilmDao {
         }
         return result;
     }
+
+    public List<Film> getRandomMovies(Integer store_id){
+        List<Film> result = new ArrayList<>();
+        for(int i = 0; i<10 ; i++){
+            result.add(packRandomMovie(store_id));
+        }
+        return result;
+    }
+
+    public Film packRandomMovie(Integer store_id){
+        String query = "SELECT f.film_id, f.title, f.description, f.release_year,\n" +
+                "       l.name as language , ol.name as original_language, f.length,\n" +
+                "       f.rating, f.special_features, f.rental_duration, f.rental_rate, f.replacement_cost,\n" +
+                "       count(*) as quantity\n" +
+                "FROM film f\n" +
+                "         LEFT JOIN language l ON ( f.language_id = l.language_id)\n" +
+                "         LEFT JOIN language ol ON ( f.original_language_id = ol.language_id)\n" +
+                "         LEFT JOIN inventory i ON (f.film_id = i.film_id)\n" +
+                "WHERE\n" +
+                "        i.store_id = ?\n" +
+                "GROUP BY f.film_id\n" +
+                "ORDER BY rand()\n" +
+                "LIMIT 1;";
+
+        Film result = new Film();
+        try(
+                Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt =  conn.prepareStatement(query);
+        ){
+            pstmt.setInt(1, store_id);
+            ResultSet rs =  pstmt.executeQuery();
+            while(rs.next()){
+                Film film = new Film();
+                film.setFilm_id(rs.getInt("film_id"));
+                film.setTitle(rs.getString("title"));
+                film.setDescription(rs.getString("description"));
+                film.setRelease_year(rs.getInt("release_year"));
+                film.setLanguage(rs.getString("language"));
+                film.setOriginal_language(rs.getString("original_language"));
+                film.setLength(rs.getInt("length"));
+                film.setRating(rs.getString("rating"));
+                film.setSpecial_features(rs.getString("special_features"));
+                film.setRental_duration(rs.getInt("rental_duration"));
+                film.setRental_rate(rs.getDouble("rental_rate"));
+                film.setReplacement_cost(rs.getDouble("replacement_cost"));
+                film.setQuantity(rs.getInt("quantity"));
+                result = film;
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            // TODO: gestionar correctamente la excepcion
+        }
+        return result;
+    }
+
 }

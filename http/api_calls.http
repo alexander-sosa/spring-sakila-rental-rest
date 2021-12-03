@@ -4,36 +4,50 @@ GET http://localhost:8080/
 ### MOVIES ###
 ### Get all movies from a store
 GET http://localhost:8080/film/2
+Accept: application/json
+
+### Get 10 random movies from a store
+GET http://localhost:8080/film/random/2
+Accept: application/json
 
 ### Find a movie by title from a store
 GET http://localhost:8080/film/1?title=maude
+Accept: application/json
 
 ### Find a movie by actor from a store
 GET http://localhost:8080/film/1?actor=gina
+Accept: application/json
 
 ### Find a movie by title and actor from a store
 GET http://localhost:8080/film/2?title=window&actor=gina
+Accept: application/json
 
 ### STORES ###
 ### Get all stores
 GET http://localhost:8080/store
+Accept: application/json
 
 ### Get an specific store
 GET http://localhost:8080/store/5
+Accept: application/json
 
 ### ADDRESSES ###
 ### Get specific address info
 GET http://localhost:8080/address/5
+Accept: application/json
 
 ### Get all countries
 GET http://localhost:8080/address/country
+Accept: application/json
 
 ### Get all cities from a country
-GET http://localhost:8080/address/city/50
+GET http://localhost:8080/address/city/20
+Accept: application/json
 
 ### Crate a new address
 POST http://localhost:8080/address
 Content-Type: application/json
+Accept: application/json
 
 {
   "address": "Calle 2",
@@ -46,18 +60,28 @@ Content-Type: application/json
 
 ### USERS ###
 ### Get specific user info
-GET http://localhost:8080/user/599
+GET http://localhost:8080/user/602
+Accept: application/json
 
 ### Crate a new user
 POST http://localhost:8080/user
 Content-Type: application/json
+Accept: application/json
 
 {
-  "store_id": 20,
-  "first_name": "Ronaldo",
-  "last_name": "Rojas",
-  "email": "ronaldo.rojas@noreply.com",
+  "first_name": "Alexander",
+  "last_name": "Sosa",
+  "email": "alexander.sosa@noreply.com",
   "address_id": 5
+}
+
+### Login
+POST http://localhost:8080/user/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "AUSTIN.CINTRON@sakilacustomer.org"
 }
 
 ### Update an existing user
@@ -76,6 +100,7 @@ Content-Type: application/json
 ### Make a rent for a film
 POST http://localhost:8080/rent
 Content-Type: application/json
+Accept: application/json
 
 {
   "rental_date": "2021-11-23 00:29:45",
@@ -87,10 +112,22 @@ Content-Type: application/json
 ### Make a payment for a film
 POST http://localhost:8080/payment
 Content-Type: application/json
+Accept: application/json
 
 {
   "customer_id": 602,
   "rental_id": 100,
   "amount": 69.96,
   "payment_date": "2021-11-28 00:29:45"
+}
+
+### Look for the available inventory
+POST http://localhost:8080/rent/inventory
+Content-Type: application/json
+Accept: application/json
+
+{
+  "film_id": 2,
+  "store_id": 2,
+  "return_date": "2021-12-02"
 }

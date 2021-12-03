@@ -31,4 +31,8 @@ public class FilmsBL {
     public List<Film> findByActorAndTitle(Integer storeId, String actor, String title){
         return filmDao.findByActorAndTitle(storeId, actor, title);
     }
+
+    public List<Film> getRandomMovies(Integer storeId){
+        return filmDao.getRandomMovies(storeId);
+    }
 }

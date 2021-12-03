@@ -20,11 +20,15 @@ public class UserBL {
         return userDao.findUserById(userID);
     }
 
-    public boolean createUser(User user){
+    public List<User> createUser(User user){
         return userDao.createUser(user);
     }
 
     public boolean updateUser(User user){
         return userDao.updateUser(user);
+    }
+
+    public List<User> findUserByEmail(User user){
+        return userDao.findUserByEmail(user);
     }
 }

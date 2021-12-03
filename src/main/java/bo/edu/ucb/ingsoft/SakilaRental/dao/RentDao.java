@@ -1,6 +1,7 @@
 package bo.edu.ucb.ingsoft.SakilaRental.dao;
 
 import bo.edu.ucb.ingsoft.SakilaRental.dto.Address;
+import bo.edu.ucb.ingsoft.SakilaRental.dto.Inventory;
 import bo.edu.ucb.ingsoft.SakilaRental.dto.Payment;
 import bo.edu.ucb.ingsoft.SakilaRental.dto.Rent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,4 +130,45 @@ public class RentDao {
         }
         return result;
     }
+
+    public List<Inventory> getAvailableInventory(Inventory inventory){
+        String query = "SELECT i.inventory_id\n" +
+                "FROM inventory i\n" +
+                "    LEFT JOIN film f on f.film_id = i.film_id\n" +
+                "    LEFT JOIN store s on i.store_id = s.store_id\n" +
+                "WHERE\n" +
+                "    f.film_id = ?\n" +
+                "    AND s.store_id = ?\n" +
+                "    AND i.inventory_id NOT IN (\n" +
+                "        SELECT i2.inventory_id\n" +
+                "        FROM inventory i2\n" +
+                "            LEFT JOIN rental r on i2.inventory_id = r.inventory_id\n" +
+                "        WHERE\n" +
+                "            i2.film_id = ?\n" +
+                "            AND i2.store_id = ?\n" +
+                "            AND return_date > ?\n" +
+                "    );";
+        List<Inventory> result = new ArrayList<>();
+        try(
+                Connection conn = dataSource.getConnection();
+                PreparedStatement pstmt =  conn.prepareStatement(query);
+        ){
+            pstmt.setInt(1, inventory.getFilm_id());
+            pstmt.setInt(2, inventory.getStore_id());
+            pstmt.setInt(3, inventory.getFilm_id());
+            pstmt.setInt(4, inventory.getStore_id());
+            pstmt.setString(5, inventory.getReturn_date());
+            ResultSet rs =  pstmt.executeQuery();
+            while(rs.next()){
+                Inventory inventory1 = new Inventory();
+                inventory1.setInventory_id(rs.getInt("inventory_id"));
+                result.add(inventory1);
+            }
+        }catch(SQLException ex){
+            ex.printStackTrace();
+            // TODO: gestionar correctamente la excepcion
+        }
+        return result;
+    }
+
 }

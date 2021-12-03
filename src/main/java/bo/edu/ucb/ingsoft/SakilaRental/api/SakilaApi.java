@@ -60,6 +60,15 @@ public class SakilaApi {
         return new ResponseEntity<>("Film not found", HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping(value = "/film/random/{storeId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> getRandomMovies(@PathVariable(name = "storeId") Integer storeId){
+        List<Film> films;
+        films = filmsBL.getRandomMovies(storeId);
+        if(films.size() != 0)
+            return new ResponseEntity<>(films, HttpStatus.OK);
+        return new ResponseEntity<>("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @GetMapping(value = "/store", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Store> getStores(){
         return storeBL.getStores();
@@ -110,13 +119,23 @@ public class SakilaApi {
         return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
-    public ResponseEntity<String> createUser(@RequestBody User user){
-        if(userBL.createUser(user))
-            return new ResponseEntity<>("User created successfully", HttpStatus.OK);
+    @PostMapping(value = "/user", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Object> createUser(@RequestBody User user){
+        List<User> createdUser = userBL.createUser(user);
+        if(!createdUser.isEmpty())
+            return new ResponseEntity<>(createdUser, HttpStatus.OK);
         return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
     }
 
+    @PostMapping(value = "/user/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Object> login(@RequestBody User user){
+        List<User> foundUser = userBL.findUserByEmail(user);
+        if(!foundUser.isEmpty())
+            return new ResponseEntity<>(foundUser, HttpStatus.OK);
+        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+    }
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping(value = "/user/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateUser(@RequestBody User user, @PathVariable(name = "userId") Integer user_id){
         user.setUser_id(user_id);
@@ -139,5 +158,13 @@ public class SakilaApi {
         if(!registeredPayment.isEmpty())
             return new ResponseEntity<>(registeredPayment, HttpStatus.OK);
         return new ResponseEntity<>("Invalid data supplied", HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(value = "/rent/inventory", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> getAvailableInventory(@RequestBody Inventory inventory){
+        List<Inventory> foundInventory = rentBL.getAvailableInventory(inventory);
+        if(!foundInventory.isEmpty())
+            return new ResponseEntity<>(foundInventory, HttpStatus.OK);
+        return new ResponseEntity<>("No inventory found", HttpStatus.BAD_REQUEST);
     }
 }
