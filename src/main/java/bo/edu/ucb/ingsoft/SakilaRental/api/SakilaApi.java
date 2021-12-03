@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,12 +22,13 @@ public class SakilaApi {
     RentBL rentBL;
 
     @Autowired
-    public SakilaApi(FilmsBL filmsBL, StoreBL storeBL, AddressBL addressBL, UserBL userBL, RentBL rentBL){
+    public SakilaApi(FilmsBL filmsBL, StoreBL storeBL, AddressBL addressBL, UserBL userBL, RentBL rentBL, JavaMailSender mailSender){
         this.filmsBL = filmsBL;
         this.storeBL = storeBL;
         this.addressBL = addressBL;
         this.userBL = userBL;
         this.rentBL = rentBL;
+        this.mailSender = mailSender;
     }
 
     @GetMapping()
@@ -64,6 +67,24 @@ public class SakilaApi {
     public ResponseEntity<Object> getRandomMovies(@PathVariable(name = "storeId") Integer storeId){
         List<Film> films;
         films = filmsBL.getRandomMovies(storeId);
+        if(films.size() != 0)
+            return new ResponseEntity<>(films, HttpStatus.OK);
+        return new ResponseEntity<>("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping(value = "/film/mostrented/{storeId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> getMostRented(@PathVariable(name = "storeId") Integer storeId){
+        List<Film> films;
+        films = filmsBL.getMostRented(storeId);
+        if(films.size() != 0)
+            return new ResponseEntity<>(films, HttpStatus.OK);
+        return new ResponseEntity<>("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping(value = "/film/mostrentedweek/{storeId}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> getMostRentedByWeek(@PathVariable(name = "storeId") Integer storeId){
+        List<Film> films;
+        films = filmsBL.getMostRentedByWeek(storeId);
         if(films.size() != 0)
             return new ResponseEntity<>(films, HttpStatus.OK);
         return new ResponseEntity<>("Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -166,5 +187,18 @@ public class SakilaApi {
         if(!foundInventory.isEmpty())
             return new ResponseEntity<>(foundInventory, HttpStatus.OK);
         return new ResponseEntity<>("No inventory found", HttpStatus.BAD_REQUEST);
+    }
+
+    private final JavaMailSender mailSender;
+
+    @PostMapping(value = "/email", consumes = MediaType.APPLICATION_JSON_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE})
+    public ResponseEntity<Object> sendEmail(@RequestBody User user){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("sakila@sakila.org");
+        message.setTo(user.getEmail());
+        message.setSubject("Films rental completed!");
+        message.setText("Thanks for your purchase " + user.getFirst_name() + " " + user.getLast_name() + "! Your films are on the way to your address.");
+        mailSender.send(message);
+        return new ResponseEntity<>("Mail sent", HttpStatus.OK);
     }
 }

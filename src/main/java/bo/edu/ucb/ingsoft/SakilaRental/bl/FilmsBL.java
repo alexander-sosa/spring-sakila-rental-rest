@@ -35,4 +35,12 @@ public class FilmsBL {
     public List<Film> getRandomMovies(Integer storeId){
         return filmDao.getRandomMovies(storeId);
     }
+
+    public List<Film> getMostRented(Integer storeId){
+        return filmDao.getMostRentedMovies(storeId);
+    }
+
+    public List<Film> getMostRentedByWeek(Integer storeId){
+        return filmDao.getMostRentedMoviesByWeek(storeId);
+    }
 }

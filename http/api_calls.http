@@ -10,6 +10,14 @@ Accept: application/json
 GET http://localhost:8080/film/random/2
 Accept: application/json
 
+### Get 10 most rented
+GET http://localhost:8080/film/mostrented/1
+Accept: application/json
+
+### Get 10 most rented weekly
+GET http://localhost:8080/film/mostrentedweek/1
+Accept: application/json
+
 ### Find a movie by title from a store
 GET http://localhost:8080/film/1?title=maude
 Accept: application/json
@@ -103,10 +111,10 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "rental_date": "2021-11-23 00:29:45",
-  "inventory_id": 100,
+  "rental_date": "2021-12-03",
+  "inventory_id": 9,
   "customer_id": 602,
-  "return_date": "2021-11-28 00:29:45"
+  "return_date": "2021-12-10"
 }
 
 ### Make a payment for a film
@@ -116,9 +124,9 @@ Accept: application/json
 
 {
   "customer_id": 602,
-  "rental_id": 100,
+  "rental_id": 16094,
   "amount": 69.96,
-  "payment_date": "2021-11-28 00:29:45"
+  "payment_date": "2021-12-03 00:29:45"
 }
 
 ### Look for the available inventory
@@ -130,4 +138,14 @@ Accept: application/json
   "film_id": 2,
   "store_id": 2,
   "return_date": "2021-12-02"
+}
+
+### Mails
+POST http://localhost:8080/email
+Content-Type: application/json
+
+{
+  "first_name": "ANN",
+  "last_name": "SMITH",
+  "email": "ANN.SMITH@sakilacustomer.org"
 }
