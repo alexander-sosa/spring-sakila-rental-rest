@@ -12,6 +12,7 @@ the films catalog, films in stock, movies search, stores, adresses, countries, c
 - API Rest
 - Mails
 - MySQL
+- Swagger
 
 ## Topics Covered
 - API Rest
